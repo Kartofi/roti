@@ -1,0 +1,42 @@
+* {
+  transition-duration: 0.5s;
+}
+
+body {
+  color: white;
+  background-color: rgb(26, 26, 26);
+}
+
+a {
+  color: rgb(255, 255, 255);
+}
+
+.panel {
+  background-color: rgb(49, 49, 49);
+
+  padding: 10px;
+
+  border-radius: 10px;
+  border-color: white;
+  border-width: 1px;
+  border-style: solid;
+
+  width: fit-content;
+
+  text-align: center;
+}
+input[type="file"] {
+  color: white;
+}
+input[type="submit"] {
+  background-color: rgb(25, 25, 25);
+  border: none;
+  border-radius: 2px;
+  font-size: large;
+  color: white;
+}
+input[type="submit"]:hover {
+  cursor: pointer;
+  background-color: rgb(255, 255, 255);
+  color: black;
+}
