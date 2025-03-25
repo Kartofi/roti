@@ -1,3 +1,5 @@
+use std::{ fs, path::Path };
+
 use database::Database;
 use dotenv::dotenv;
 
@@ -10,12 +12,15 @@ pub mod structs;
 
 fn main() {
     dotenv().ok();
-
+    if !Path::new("./data").exists() {
+        fs::create_dir("./data").unwrap();
+    }
     let mut database: Database = Database::new();
 
     let mut server: Server<Database> = Server::new(Some(0), Some(database));
 
     server.get("/", routes::index::handle).unwrap();
+    server.get("/[id]", routes::view::handle).unwrap();
     server.post("/upload", routes::upload::handle).unwrap();
 
     server.new_static("/static", "./ui/static").unwrap();

@@ -6,8 +6,6 @@ use mongodb::sync::{ Client, Collection };
 
 use crate::{ structs::Image, utils::{ self, get_id } };
 
-
-
 #[derive(Clone)]
 pub struct Database {
     client: Client,
@@ -37,7 +35,7 @@ impl Database {
         }
     }
     pub fn get_image(&self, id: &str) -> Option<Image> {
-        let task = self.images.find_one(doc! { id: id });
+        let task = self.images.find_one(doc! { "id": id });
         task.run().unwrap_or_default()
     }
 }

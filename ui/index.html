@@ -12,9 +12,16 @@
   <body>
     <div class="panel">
       <a>Title</a>
-      <form action="/upload" enctype="multipart/form-data" method="post">
-        <input type="file" accept="image/*" id="preview" name="image" />
+      <form
+        action="/upload"
+        enctype="multipart/form-data"
+        method="post"
+        autocomplete="off"
+      >
+        <input type="file" accept="image/*" id="input_file" name="image" />
         <input type="submit" value="Upload🚀" />
+        <br />
+        <img style="max-width: 400px" src="/static/no_file.png" id="preview" />
       </form>
     </div>
   </body>

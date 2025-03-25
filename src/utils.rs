@@ -1,9 +1,8 @@
 use std::time::{ SystemTime, UNIX_EPOCH };
-use std::hash::{ DefaultHasher, Hash, Hasher };
 use rand::Rng;
 
-const CHARSET: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+{}:";
-const ID_LENGTH: u64 = 10;
+const CHARSET: &str = "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+const ID_LENGTH: u64 = 20;
 
 pub fn get_timestamp() -> u64 {
     SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs()
@@ -22,8 +21,7 @@ pub fn get_id(length: u64) -> String {
         output.push(random_char());
     }
 
-    let digest = md5::compute(output);
-    format!("{:x}", digest)
+    output
 }
 pub fn get_id_default() -> String {
     get_id(ID_LENGTH)
