@@ -1,7 +1,7 @@
 use std::{ env, fs::{ self, File }, io::{ Read, Write } };
 
 use choki::src::{ request::Request, response::Response, structs::{ ContentType, ResponseCode } };
-use crate::{ structs::Image, utils::get_timestamp, Database };
+use crate::{ structs::Image, utils::{ self, get_timestamp }, Database };
 
 pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     let body = req.body();
@@ -29,21 +29,17 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
         res.send_string("No file!");
         return;
     }
-    if image.file_name.ends_with(".gif") {
-        image.file_path = env::var("DATA").unwrap() + &id + ".gif";
-        image.file_type = ContentType::Gif.as_str().to_string();
-    } else if image.file_name.ends_with(".png") {
-        image.file_path = env::var("DATA").unwrap() + &id + ".png";
-        image.file_type = ContentType::Png.as_str().to_string();
-    } else if image.file_name.ends_with(".jpg") || image.file_name.ends_with(".jpeg") {
-        image.file_path = env::var("DATA").unwrap() + &id + ".jpg";
-        image.file_type = ContentType::Jpeg.as_str().to_string();
-    } else {
+    let allowed_extension = utils::is_extension_allowed(&image.file_name);
+
+    if allowed_extension.0 == false {
         res.set_status(&ResponseCode::BadRequest);
         res.send_string("Only images allowed!");
         return;
     }
-    let file_path = image.file_path.clone();
+    let file_path = env::var("DATA").unwrap() + &id + allowed_extension.1;
+
+    image.file_path = file_path.clone();
+    image.file_type = allowed_extension.2.as_str().to_string();
 
     let database = database.unwrap();
     if database.add_image(image) {
