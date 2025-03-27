@@ -17,7 +17,7 @@ fn main() {
     }
     let mut database: Database = Database::new();
 
-    let mut server: Server<Database> = Server::new(Some(0), Some(database));
+    let mut server: Server<Database> = Server::new(Some(5_000_000), Some(database));
 
     server.get("/", routes::index::handle).unwrap();
     server.get("/image/[id]", routes::image::handle).unwrap();

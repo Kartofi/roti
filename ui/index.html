@@ -2,27 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/static/index.css" />
-    <script src="/static/index.js"></script>
+    <link rel="stylesheet" href="/static/css/common.css" />
+    <link rel="stylesheet" href="/static/css/index.css" />
+
+    <script type="text/javascript" src="/static/js/common.js"></script>
+    <script type="text/javascript" src="/static/js/index.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Roti🍅</title>
   </head>
   <body>
-    <div class="panel">
-      <a>Title</a>
-      <form
-        action="/upload"
-        enctype="multipart/form-data"
-        method="post"
-        autocomplete="off"
-      >
-        <input type="file" accept="image/*" id="input_file" name="image" />
-        <input type="submit" value="Upload🚀" />
+    <center>
+      <div class="panel">
+        <h2>Roti🍅</h2>
         <br />
-        <img style="max-width: 400px" src="/static/no_file.png" id="preview" />
-      </form>
-    </div>
+        <a
+          >Uploads up to 5 MB are allowed. Only png,gif and jpeg are allowed.</a
+        >
+        <br />
+        <br />
+        <form
+          action="/upload"
+          enctype="multipart/form-data"
+          method="post"
+          autocomplete="off"
+        >
+          <input type="file" accept="image/*" id="input_file" name="image" />
+          <input type="submit" value="Upload🚀" />
+          <br />
+          <br />
+          <img
+            style="max-width: 400px"
+            src="/static/no_file.png"
+            id="preview"
+          />
+        </form>
+      </div>
+    </center>
   </body>
 </html>

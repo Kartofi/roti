@@ -1,5 +1,5 @@
-use std::time::{ SystemTime, UNIX_EPOCH };
-use choki::src::structs::ContentType;
+use std::{ fs::File, io::Read, time::{ SystemTime, UNIX_EPOCH } };
+use choki::src::{ response::Response, structs::ContentType };
 use rand::Rng;
 
 const CHARSET: &str = "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -41,4 +41,13 @@ pub fn is_extension_allowed(input: &str) -> (bool, &str, ContentType) {
         }
     }
     return (false, "", ContentType::None);
+}
+// Http stuff
+
+pub fn send_file(path: &str, content_type: ContentType, res: &mut Response) {
+    let mut file = File::open(path).unwrap();
+    let mut content: Vec<u8> = Vec::new();
+    file.read_to_end(&mut content).unwrap();
+
+    res.send_bytes_chunked(&content, Some(content_type));
 }

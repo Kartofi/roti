@@ -1,0 +1,15 @@
+input[type="file"] {
+  color: white;
+}
+input[type="submit"] {
+  background-color: rgb(25, 25, 25);
+  border: none;
+  border-radius: 2px;
+  font-size: large;
+  color: white;
+}
+input[type="submit"]:hover {
+  cursor: pointer;
+  background-color: rgb(255, 255, 255);
+  color: black;
+}
