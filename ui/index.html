@@ -15,10 +15,11 @@
   <body>
     <center>
       <div class="panel">
-        <h2>Roti🍅</h2>
-        <br />
+        <h1>Roti🍅</h1>
+
         <a
-          >Uploads up to 5 MB are allowed. Only png,gif and jpeg are allowed.</a
+          >Uploads up to <red>5 MB</red> are allowed. <br />Only
+          <yellow>png,gif and jpeg</yellow> are allowed.</a
         >
         <br />
         <br />
@@ -28,7 +29,12 @@
           method="post"
           autocomplete="off"
         >
+          <label for="input_file" id="input_file_name" class="input_file">
+            Click to select
+          </label>
           <input type="file" accept="image/*" id="input_file" name="image" />
+          <br />
+          <br />
           <input type="submit" value="Upload🚀" />
           <br />
           <br />

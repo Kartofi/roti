@@ -1,11 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap");
-
+@import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
 * {
   transition-duration: 0.5s;
 
-  font-family: "Pixelify Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 25px;
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 body {
@@ -15,6 +14,7 @@ body {
 
 a {
   color: rgb(255, 255, 255);
+  font-size: 25px;
 }
 
 .panel {
@@ -27,7 +27,17 @@ a {
   border-width: 1px;
   border-style: solid;
 
-  width: fit-content;
+  box-shadow: 0 0px 8px 0 rgba(255, 0, 0, 0.63),
+    0 6px 20px 0 rgba(255, 255, 255, 0.19);
+
+  max-width: 650px;
+  min-width: 350px;
 
   text-align: center;
+}
+red {
+  color: red;
+}
+yellow {
+  color: yellow;
 }
