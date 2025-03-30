@@ -18,6 +18,8 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
         return;
     }
     let result = result.unwrap();
+
+    database.add_views_image(id);
     crate::utils::send_file(
         &result.file_path,
         ContentType::from_string(&result.file_type),

@@ -1,4 +1,7 @@
 let bytes_sizes = ["bytes", "KB", "MB", "GB"];
+let number_sizes = ["", "K", "M", "B", "T", "Qa"];
+
+let default_name_length = 40;
 
 function size_format(size) {
   let steps = 0;
@@ -7,4 +10,25 @@ function size_format(size) {
     steps += 1;
   }
   return size.toFixed(2) + " " + bytes_sizes[steps];
+}
+function format_number(number) {
+  let steps = 0;
+  while (number >= 10000 && steps < number_sizes.length - 1) {
+    number /= 1000;
+    steps += 1;
+  }
+  return (number.toFixed(2) + " " + number_sizes[steps]).replace(".00", "");
+}
+function shorten_string(input, max_size) {
+  if (max_size == null) {
+    max_size = default_name_length;
+  }
+  if (input.length <= max_size) {
+    return input;
+  }
+  return (
+    input.slice(0, max_size / 2) +
+    " ... " +
+    input.slice(input.length - max_size / 2)
+  ); // Use slice to get the last `max_size` characters
 }

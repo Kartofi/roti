@@ -1,15 +1,16 @@
 use std::{ env, time::{ Instant, SystemTime, UNIX_EPOCH } };
 
 use bson::doc;
-use mongodb::{ bson::oid::ObjectId };
+use mongodb::{ bson::oid::ObjectId, results::DeleteResult };
 use mongodb::sync::{ Client, Collection };
 
-use crate::{ structs::Image, utils::{ self, get_id } };
+use crate::{ structs::{ Ban, Image, User }, utils::{ self, get_id, get_timestamp } };
 
 #[derive(Clone)]
 pub struct Database {
     client: Client,
     images: Collection<Image>,
+    banned_users: Collection<Ban>,
 }
 
 impl Database {
@@ -21,8 +22,9 @@ impl Database {
         let client = Client::with_uri_str(client_uri).unwrap();
 
         let images = client.database("Roti").collection::<Image>("Images");
+        let banned_users = client.database("Roti").collection::<Ban>("Banned_Users");
 
-        return Database { client: client, images: images };
+        return Database { client: client, images: images, banned_users: banned_users };
     }
     pub fn add_image(&self, image: Image) -> bool {
         match self.images.insert_one(image).run() {
@@ -37,5 +39,66 @@ impl Database {
     pub fn get_image(&self, id: &str) -> Option<Image> {
         let task = self.images.find_one(doc! { "id": id });
         task.run().unwrap_or_default()
+    }
+    pub fn add_views_image(&self, id: &str) -> bool {
+        let task = self.images.update_one(doc! { "id": id }, doc! { "$inc": {"views": 1} });
+        let run = task.run();
+        if run.is_err() {
+            return false;
+        }
+        run.unwrap();
+        true
+    }
+    pub fn get_bans(&self) -> Vec<Ban> {
+        let cursor = match self.banned_users.find(doc! {}).run() {
+            Ok(cursor) => cursor,
+            Err(_) => {
+                return vec![];
+            }
+        };
+
+        let bans: Vec<Ban> = cursor
+            .filter_map(|doc| doc.ok().map(|d| Ban::from(d))) // Filter out errors and convert each document to a Ban
+            .collect();
+
+        bans
+    }
+
+    pub fn check_ip(&self, ip: &str) -> Option<Ban> {
+        let task = self.banned_users.find_one(doc! { "ip": ip });
+        task.run().unwrap_or_default()
+    }
+    pub fn ban_ip(&self, ip: &str, reason: &str) -> bool {
+        let found = self.check_ip(ip);
+        if found.is_some() {
+            return false;
+        }
+        let mut ban = Ban::new();
+        ban.ip = ip.to_string();
+        ban.reason = reason.to_string();
+        ban.time = get_timestamp();
+
+        match self.banned_users.insert_one(ban).run() {
+            Ok(_) => {
+                return true;
+            }
+            Err(_) => {
+                return false;
+            }
+        }
+    }
+    pub fn unban_ip(&self, ip: &str) -> bool {
+        if self.check_ip(ip).is_none() {
+            return false;
+        }
+        let task = self.banned_users.delete_one(doc! { "ip":ip });
+        match task.run() {
+            Ok(_) => {
+                return true;
+            }
+            Err(_) => {
+                return false;
+            }
+        }
     }
 }

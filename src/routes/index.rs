@@ -1,7 +1,7 @@
 use std::{ fs::File, io::Read };
 
 use choki::src::{ request::Request, response::Response, structs::ContentType };
-use crate::Database;
+use crate::{ database, Database };
 
 pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     res.use_compression = true;

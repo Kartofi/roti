@@ -4,6 +4,15 @@ use choki::src::{ request::Request, response::Response, structs::{ ContentType, 
 use crate::{ structs::Image, utils::{ self, get_timestamp }, Database };
 
 pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
+    let database = database.unwrap();
+    let ban = database.check_ip(&req.ip.clone().unwrap_or_default());
+    if ban.is_some() {
+        let ban = ban.unwrap();
+        res.set_status(&ResponseCode::BadRequest);
+        res.send_string(&format!("Banned from uploading! Reason: {}", ban.reason));
+        return;
+    }
+
     let body = req.body();
     if req.content_type.clone().unwrap() != ContentType::MultipartForm {
         res.set_status(&ResponseCode::BadRequest);
@@ -17,9 +26,12 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     }
     let body_item = &body[0];
 
-    let mut image = Image::new("", "", "", 0, 0);
+    let mut image = Image::new();
     let id = image.id.clone();
-
+    //Uploader
+    image.uploader.ip = req.ip.clone().unwrap_or_default();
+    image.uploader.user_agent = req.user_agent.clone().unwrap_or_default();
+    //
     image.file_name = body_item.info.file_name.clone().unwrap_or_default();
     image.size = body_item.data.len() as u64;
     image.upload_time = get_timestamp();
@@ -41,7 +53,6 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     image.file_path = file_path.clone();
     image.file_type = allowed_extension.2.as_str().to_string();
 
-    let database = database.unwrap();
     if database.add_image(image) {
         let mut file = File::create(file_path).unwrap();
         file.write_all(body_item.data).unwrap();

@@ -35,8 +35,14 @@ a {
 
   text-align: center;
 }
+.hypertext {
+  color: rgb(107, 107, 255);
+}
+.hypertext:hover {
+  color: rgb(255, 255, 255);
+}
 red {
-  color: red;
+  color: rgb(255, 53, 53);
 }
 yellow {
   color: yellow;

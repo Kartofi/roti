@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (file) {
       preview.src = URL.createObjectURL(file);
       let size = size_format(file.size);
-      text_info.innerText = file.name + " (" + size + ")";
+      text_info.innerText = shorten_string(file.name) + " (" + size + ")";
     }
   }
 

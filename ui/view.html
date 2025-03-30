@@ -5,14 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/common.css" />
     <title>[FILENAME]</title>
+    <meta content="[FILENAME]" property="og:title" />
+    <meta
+      content="Size: [IMAGESIZE] Views: [VIEWS] 👀"
+      property="og:description"
+    />
+    <meta content="[IMAGEURL]" property="og:url" />
+    <meta content="[IMAGEURL]" property="og:image" />
+    <meta content="#ff1f39" data-react-helmet="true" name="theme-color" />
   </head>
   <script type="text/javascript" src="/static/js/common.js"></script>
   <script type="text/javascript" src="/static/js/view.js"></script>
   <body>
-    <div class="panel">
-      <img style="max-width: 400px" src="[IMAGEURL]" />
-      <br />
-      <a>[FILENAME] <red id="file_size">[IMAGESIZE]</red></a>
-    </div>
+    <center>
+      <div class="panel">
+        <img style="max-width: 400px" src="[IMAGEURL]" />
+        <br />
+        <a class="hypertext" href="[IMAGEURL]">[FILENAME]</a>
+        <br />
+        <a>Size: <red id="file_size">[IMAGESIZE]</red></a>
+
+        <a>Views: <yellow id="views">[VIEWS]</yellow> 👀</a>
+      </div>
+    </center>
   </body>
 </html>
