@@ -1,5 +1,6 @@
 use std::{ env, fs::File, io::Read };
 
+use bson::doc;
 use choki::src::{ request::Request, response::Response, structs::{ ContentType, ResponseCode } };
 use crate::{ database, structs::Ban, Database };
 
@@ -10,49 +11,68 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
 }
 
 pub fn handle_ban(req: Request, mut res: Response, database: Option<Database>) {
-    if !handle_password_check(&req, &mut res) {
+    let body = req.body();
+    if !handle_password_check(&body) || req.body().len() != 3 {
+        res.set_status(&ResponseCode::BadRequest);
+        res.send_json(&(doc! { "result":false,"error":"Wrong or missing password!" }).to_string());
+
+        return;
+    }
+    if req.body().len() != 3 {
+        res.set_status(&ResponseCode::BadRequest);
+        res.send_json(&(doc! { "result":false,"error":"No ip or reason provided!" }).to_string());
         return;
     }
 
     res.use_compression = true;
     let database = database.unwrap();
-    database.ban_ip(&req.ip.unwrap_or_default(), "NOOO");
-    crate::utils::send_file("./ui/index.html", ContentType::Html, &mut res);
+    let result = database.ban_ip(
+        &String::from_utf8_lossy(body[1].data),
+        &String::from_utf8_lossy(body[2].data)
+    );
+    res.send_json(&(doc! { "result":result.0,"error":result.1 }).to_string());
 }
 pub fn handle_unban(req: Request, mut res: Response, database: Option<Database>) {
-    if !handle_password_check(&req, &mut res) {
+    let body = req.body();
+    if !handle_password_check(&body) {
+        res.set_status(&ResponseCode::BadRequest);
+        res.send_json(&(doc! { "result":false,"error":"Wrong or missing password!" }).to_string());
         return;
     }
-
+    if body.len() != 2 {
+        res.set_status(&ResponseCode::BadRequest);
+        res.send_json(&(doc! { "result":false,"error":"No ip or reason provided!" }).to_string());
+        return;
+    }
     res.use_compression = true;
     let database = database.unwrap();
-    database.ban_ip(&req.ip.unwrap_or_default(), "NOOO");
-    crate::utils::send_file("./ui/index.html", ContentType::Html, &mut res);
+    let result = database.unban_ip(&String::from_utf8_lossy(body[1].data));
+
+    res.send_json(&(doc! { "result":result,"error":"" }).to_string());
 }
 pub fn handle_get_bans(req: Request, mut res: Response, database: Option<Database>) {
-    if !handle_password_check(&req, &mut res) {
+    let body = req.body();
+    if !handle_password_check(&body) {
+        res.set_status(&ResponseCode::BadRequest);
+        res.send_json(&(doc! { "result":false,"error":"Wrong or missing password!" }).to_string());
         return;
     }
 
     res.use_compression = true;
     let database = database.unwrap();
+
     let bans: Vec<Ban> = database.get_bans();
 
     let bson = serde_json::to_string(&bans).unwrap_or_default();
 
     res.send_json(&bson);
 }
-fn handle_password_check(req: &Request, res: &mut Response) -> bool {
-    let body = req.body();
-    if body.len() != 1 || body[0].info.clone().name.unwrap_or_default() != "password" {
-        res.set_status(&ResponseCode::BadRequest);
-        res.send_string("No Password!");
+fn handle_password_check(body: &Vec<choki::src::structs::BodyItem<'_>>) -> bool {
+    if body.len() == 0 || body[0].info.clone().name.unwrap_or_default() != "password" {
         return false;
     }
     let valid = check_password(&String::from_utf8_lossy(&body[0].data));
     if !valid {
-        res.set_status(&ResponseCode::BadRequest);
-        res.send_string("Wrong password!");
         return false;
     }
     return true;

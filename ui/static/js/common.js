@@ -19,6 +19,9 @@ function format_number(number) {
   }
   return (number.toFixed(2) + " " + number_sizes[steps]).replace(".00", "");
 }
+function formatWithZero(number) {
+  return String(number).padStart(2, "0");
+}
 function shorten_string(input, max_size) {
   if (max_size == null) {
     max_size = default_name_length;
@@ -31,4 +34,20 @@ function shorten_string(input, max_size) {
     " ... " +
     input.slice(input.length - max_size / 2)
   ); // Use slice to get the last `max_size` characters
+}
+
+function format_date(date) {
+  return (
+    formatWithZero(date.getHours()) +
+    ":" +
+    formatWithZero(date.getMinutes()) +
+    ":" +
+    formatWithZero(date.getSeconds()) +
+    " " +
+    formatWithZero(date.getDate()) +
+    "." +
+    formatWithZero(date.getMonth()) +
+    "." +
+    date.getFullYear()
+  );
 }

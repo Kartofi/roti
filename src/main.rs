@@ -21,6 +21,8 @@ fn main() {
 
     server.get("/admin", routes::admin::handle).unwrap();
     server.post("/admin/getbans", routes::admin::handle_get_bans).unwrap();
+    server.delete("/admin/unban", routes::admin::handle_unban).unwrap();
+    server.post("/admin/ban", routes::admin::handle_ban).unwrap();
 
     server.get("/", routes::index::handle).unwrap();
     server.get("/image/[id]", routes::image::handle).unwrap();

@@ -3,14 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="/static/css/common.css" />
+
+    <script type="text/javascript" src="/static/js/common.js"></script>
     <script type="text/javascript" src="/static/js/admin.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Page</title>
   </head>
   <body>
-    <input id="admin_pass" type="password" />
-    <button id="get_bans">Fetch Bans</button>
+    <a href="/">HOME</a>
+    <br />
+    <input id="admin_pass" type="password" placeholder="Enter admin password" />
+    <br />
+    <input id="ban_ip_input" placeholder="Enter ip to ban" type="text" />
+    <input
+      id="ban_reason_input"
+      placeholder="Enter reason to ban"
+      type="text"
+    />
+    <button id="ban">BAN🔨</button>
+    <a id="ban_result"></a>
+    <br />
+    <button id="fetch_bans">Fetch Bans</button>
+    <a id="bans_count">Loaded 0 bans</a>
+    <br />
+    <input
+      id="ip_search_input"
+      placeholder="Enter ip to search"
+      type="search"
+    />
+    <button id="search">Search</button>
+    <a id="found_bans_count">Found 0 bans</a>
+    <br />
+    <button id="refresh_bans">Refresh List</button>
 
     <a id="bans"></a>
   </body>

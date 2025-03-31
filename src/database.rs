@@ -68,10 +68,13 @@ impl Database {
         let task = self.banned_users.find_one(doc! { "ip": ip });
         task.run().unwrap_or_default()
     }
-    pub fn ban_ip(&self, ip: &str, reason: &str) -> bool {
+    pub fn ban_ip(&self, ip: &str, reason: &str) -> (bool, &str) {
+        if ip.len() == 0 {
+            return (false, "No ip provided");
+        }
         let found = self.check_ip(ip);
         if found.is_some() {
-            return false;
+            return (false, "Ip already banned!");
         }
         let mut ban = Ban::new();
         ban.ip = ip.to_string();
@@ -80,10 +83,10 @@ impl Database {
 
         match self.banned_users.insert_one(ban).run() {
             Ok(_) => {
-                return true;
+                return (true, "");
             }
             Err(_) => {
-                return false;
+                return (false, "Database error!");
             }
         }
     }
