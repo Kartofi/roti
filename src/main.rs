@@ -3,7 +3,7 @@ use std::{ fs, path::Path };
 use database::Database;
 use dotenv::dotenv;
 
-use choki::Server;
+use choki::{ src::{ request::Request, response::Response, structs::Url }, Server };
 
 pub mod database;
 pub mod routes;
@@ -19,6 +19,8 @@ fn main() {
 
     let mut server: Server<Database> = Server::new(Some(5_000_000), Some(database));
 
+    server.use_middleware(routes::middleware::handle);
+
     server.get("/admin", routes::admin::handle).unwrap();
     server.post("/admin/getbans", routes::admin::handle_get_bans).unwrap();
     server.delete("/admin/unban", routes::admin::handle_unban).unwrap();
@@ -30,6 +32,6 @@ fn main() {
     server.post("/upload", routes::upload::handle).unwrap();
 
     server.new_static("/static", "./ui/static").unwrap();
-    server.listen(3000, None, Some(100), || {}).unwrap();
+    server.listen(3000, None, None, || { println!("🍅Roti started on port 3000!") }).unwrap();
     Server::<u8>::lock();
 }

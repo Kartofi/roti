@@ -1,10 +1,10 @@
-use std::{ env, time::{ Instant, SystemTime, UNIX_EPOCH } };
+use std::{ env, fs, time::{ Instant, SystemTime, UNIX_EPOCH } };
 
 use bson::doc;
 use mongodb::{ bson::oid::ObjectId, results::DeleteResult };
 use mongodb::sync::{ Client, Collection };
 
-use crate::{ structs::{ Ban, Image, User }, utils::{ self, get_id, get_timestamp } };
+use crate::{ routes::image, structs::{ Ban, Image, User }, utils::{ self, get_id, get_timestamp } };
 
 #[derive(Clone)]
 pub struct Database {
@@ -26,6 +26,7 @@ impl Database {
 
         return Database { client: client, images: images, banned_users: banned_users };
     }
+    //Images
     pub fn add_image(&self, image: Image) -> bool {
         match self.images.insert_one(image).run() {
             Ok(_) => {
@@ -40,6 +41,37 @@ impl Database {
         let task = self.images.find_one(doc! { "id": id });
         task.run().unwrap_or_default()
     }
+    pub fn delete_image(&self, id: &str) -> bool {
+        let image = self.get_image(id);
+        if image.is_none() {
+            return false;
+        }
+        let image = image.unwrap();
+        fs::remove_file(&image.file_path).unwrap_or_default();
+
+        let task = self.images.delete_one(doc! { "id": id });
+        match task.run() {
+            Ok(_) => {
+                return true;
+            }
+            Err(_) => {
+                return false;
+            }
+        }
+    }
+    pub fn get_images(&self, ip: &str) -> Vec<Image> {
+        let task = self.images.find(doc! { "uploader.ip": ip });
+        let images: Vec<Image> = task
+            .run()
+            .unwrap()
+            .filter_map(|doc| {
+                doc.ok().map(|d| {
+                    return d;
+                })
+            })
+            .collect();
+        return images;
+    }
     pub fn add_views_image(&self, id: &str) -> bool {
         let task = self.images.update_one(doc! { "id": id }, doc! { "$inc": {"views": 1} });
         let run = task.run();
@@ -49,6 +81,7 @@ impl Database {
         run.unwrap();
         true
     }
+    // Bans
     pub fn get_bans(&self) -> Vec<Ban> {
         let cursor = match self.banned_users.find(doc! {}).run() {
             Ok(cursor) => cursor,
@@ -80,6 +113,11 @@ impl Database {
         ban.ip = ip.to_string();
         ban.reason = reason.to_string();
         ban.time = get_timestamp();
+
+        let images: Vec<Image> = self.get_images(&ip);
+        for image in images {
+            self.delete_image(&image.id);
+        }
 
         match self.banned_users.insert_one(ban).run() {
             Ok(_) => {

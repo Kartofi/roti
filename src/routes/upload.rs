@@ -5,13 +5,6 @@ use crate::{ structs::Image, utils::{ self, get_timestamp }, Database };
 
 pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     let database = database.unwrap();
-    let ban = database.check_ip(&req.ip.clone().unwrap_or_default());
-    if ban.is_some() {
-        let ban = ban.unwrap();
-        res.set_status(&ResponseCode::BadRequest);
-        res.send_string(&format!("Banned from uploading! Reason: {}", ban.reason));
-        return;
-    }
 
     let body = req.body();
     if req.content_type.clone().unwrap() != ContentType::MultipartForm {

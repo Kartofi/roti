@@ -4,3 +4,5 @@ pub mod image;
 pub mod view;
 
 pub mod admin;
+
+pub mod middleware;

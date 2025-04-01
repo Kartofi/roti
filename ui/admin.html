@@ -13,13 +13,24 @@
   <body>
     <a href="/">HOME</a>
     <br />
-    <input id="admin_pass" type="password" placeholder="Enter admin password" />
+    <input
+      id="admin_pass"
+      type="password"
+      placeholder="Enter admin password"
+      autocomplete="off"
+    />
     <br />
-    <input id="ban_ip_input" placeholder="Enter ip to ban" type="text" />
+    <input
+      id="ban_ip_input"
+      placeholder="Enter ip to ban"
+      type="text"
+      autocomplete="off"
+    />
     <input
       id="ban_reason_input"
       placeholder="Enter reason to ban"
       type="text"
+      autocomplete="off"
     />
     <button id="ban">BAN🔨</button>
     <a id="ban_result"></a>
@@ -31,6 +42,7 @@
       id="ip_search_input"
       placeholder="Enter ip to search"
       type="search"
+      autocomplete="off"
     />
     <button id="search">Search</button>
     <a id="found_bans_count">Found 0 bans</a>

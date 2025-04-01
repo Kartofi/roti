@@ -3,11 +3,12 @@ use choki::src::{ response::Response, structs::ContentType };
 use rand::Rng;
 
 const CHARSET: &str = "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-const ALLOWED_EXTENSIONS: [(&str, ContentType); 4] = [
+const ALLOWED_EXTENSIONS: [(&str, ContentType); 5] = [
     (".gif", ContentType::Gif),
     (".jpg", ContentType::Jpeg),
     (".jpeg", ContentType::Jpeg),
     (".png", ContentType::Png),
+    (".webp", ContentType::Webp),
 ];
 const ID_LENGTH: u64 = 20;
 
@@ -35,8 +36,10 @@ pub fn get_id_default() -> String {
 }
 
 pub fn is_extension_allowed(input: &str) -> (bool, &str, ContentType) {
+    let lower_input = input.to_lowercase();
+
     for extension in ALLOWED_EXTENSIONS {
-        if input.ends_with(extension.0) {
+        if lower_input.ends_with(&extension.0.to_lowercase()) {
             return (true, extension.0, extension.1);
         }
     }

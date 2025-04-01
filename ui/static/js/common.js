@@ -1,7 +1,7 @@
 let bytes_sizes = ["bytes", "KB", "MB", "GB"];
 let number_sizes = ["", "K", "M", "B", "T", "Qa"];
 
-let default_name_length = 40;
+let default_name_length = 35;
 
 function size_format(size) {
   let steps = 0;
