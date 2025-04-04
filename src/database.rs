@@ -26,6 +26,46 @@ impl Database {
 
         return Database { client: client, images: images, banned_users: banned_users };
     }
+    //Statistics
+    pub fn total_bans(&self) -> usize {
+        let task = self.banned_users.find(doc! {});
+        let count = task
+            .run()
+            .unwrap()
+            .filter_map(|doc| {
+                doc.ok().map(|d| {
+                    return d;
+                })
+            })
+            .count();
+        return count;
+    }
+    pub fn total_views(&self) -> u64 {
+        let task = self.images.find(doc! {});
+        let sizes: Vec<u64> = task
+            .run()
+            .unwrap()
+            .filter_map(|doc| {
+                doc.ok().map(|d| {
+                    return d.views;
+                })
+            })
+            .collect();
+        return sizes.iter().sum();
+    }
+    pub fn total_size(&self) -> u64 {
+        let task = self.images.find(doc! {});
+        let sizes: Vec<u64> = task
+            .run()
+            .unwrap()
+            .filter_map(|doc| {
+                doc.ok().map(|d| {
+                    return d.size;
+                })
+            })
+            .collect();
+        return sizes.iter().sum();
+    }
     //Images
     pub fn add_image(&self, image: Image) -> bool {
         match self.images.insert_one(image).run() {

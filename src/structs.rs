@@ -2,6 +2,7 @@ use choki::src::structs::ContentType;
 use serde::{ Deserialize, Serialize };
 
 use crate::utils::{ get_id_default };
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Ban {
     pub ip: String,

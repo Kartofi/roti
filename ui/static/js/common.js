@@ -3,7 +3,7 @@ let number_sizes = ["", "K", "M", "B", "T", "Qa"];
 
 let default_name_length = 35;
 
-function size_format(size) {
+function format_size(size) {
   let steps = 0;
   while (size >= 1024 && steps < bytes_sizes.length - 1) {
     size /= 1024;
@@ -17,7 +17,7 @@ function format_number(number) {
     number /= 1000;
     steps += 1;
   }
-  return (number.toFixed(2) + " " + number_sizes[steps]).replace(".00", "");
+  return (number.toFixed(2) + "" + number_sizes[steps]).replace(".00", "");
 }
 function formatWithZero(number) {
   return String(number).padStart(2, "0");

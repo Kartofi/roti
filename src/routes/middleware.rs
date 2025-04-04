@@ -5,10 +5,13 @@ use choki::src::{
     response::Response,
     structs::{ ContentType, ResponseCode, Url },
 };
+
 use crate::{ database, Database };
 
 pub fn handle(url: &Url, req: &Request, res: &mut Response, database: &Option<Database>) -> bool {
-    let ban = database.clone().unwrap().check_ip(&req.ip.clone().unwrap_or_default());
+    let ip = req.ip.clone().unwrap_or_default();
+
+    let ban = database.clone().unwrap().check_ip(&ip);
     if ban.is_none() {
         return true;
     }
