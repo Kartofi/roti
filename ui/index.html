@@ -35,8 +35,15 @@
           autocomplete="off"
         >
           <label for="input_file" id="input_file_name" class="input_file">
-            Click to select
+            Click to select or drag your file
           </label>
+          <div class="drag-background" id="drag_background">
+            <h1 id="drag_text">
+              Drop your file <red>here</red>!
+              <br />
+              <img id="drag_image" src="/static/images/amagi.png" />
+            </h1>
+          </div>
           <input type="file" accept="image/*" id="input_file" name="image" />
           <br />
           <br />
@@ -45,7 +52,7 @@
           <br />
           <img
             style="max-width: 400px"
-            src="/static/no_file.png"
+            src="/static/images/no_file.png"
             id="preview"
           />
           <br />

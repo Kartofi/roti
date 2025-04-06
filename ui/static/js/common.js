@@ -1,5 +1,6 @@
 let bytes_sizes = ["bytes", "KB", "MB", "GB"];
 let number_sizes = ["", "K", "M", "B", "T", "Qa"];
+let allowed_extensions = [".gif", ".jpg", ".jpeg", ".png", ".webp"];
 
 let default_name_length = 35;
 
@@ -50,4 +51,17 @@ function format_date(date) {
     "." +
     date.getFullYear()
   );
+}
+function is_image(name) {
+  let lower_name = name.toLowerCase();
+
+  for (let index = 0; index < allowed_extensions.length; index++) {
+    const extension = allowed_extensions[index];
+
+    if (lower_name.endsWith(extension) == true) {
+      return true;
+    }
+  }
+
+  return false;
 }
