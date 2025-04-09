@@ -17,6 +17,7 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
         res.send_string("Only one file allowed!");
         return;
     }
+    
     let body_item = &body[0];
 
     let mut image = Image::new();

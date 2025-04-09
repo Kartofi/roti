@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const [file] = imgInp.files;
     if (file) {
       preview.src = URL.createObjectURL(file);
+
       let size = format_size(file.size);
       text_info.innerText = shorten_string(file.name) + " (" + size + ")";
       default_text = text_info.innerText;
