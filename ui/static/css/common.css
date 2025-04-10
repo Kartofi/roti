@@ -1,15 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
 * {
-  transition-duration: 0.5s;
-
   font-family: "Lilita One", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
-
+html {
+  height: 100%;
+  width: 100vw;
+}
 body {
+  height: 100%;
+  width: 100vw;
+
+  margin: 0px;
+
   color: white;
-  background-color: rgb(26, 26, 26);
+
+  background-image: url("/static/images/test.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  backdrop-filter: blur(20px);
 }
 
 a {
@@ -18,25 +29,30 @@ a {
 }
 
 .panel {
-  background-color: rgb(49, 49, 49);
+  top: 10px;
+  position: relative;
+
+  background-color: rgba(49, 49, 49, 0.274);
+  backdrop-filter: blur(30px);
 
   padding: 10px;
 
   border-radius: 10px;
-  border-color: white;
+  border-color: rgba(255, 0, 0, 0.63);
   border-width: 1px;
   border-style: solid;
 
-  box-shadow: 0 0px 8px 0 rgba(255, 0, 0, 0.63),
-    0 6px 20px 0 rgba(255, 255, 255, 0.19);
+  box-shadow: var(--x) var(--y) 100px 15px rgba(255, 0, 0, 0.63);
 
   max-width: 650px;
   min-width: 350px;
 
   text-align: center;
+  transition-duration: 0.3s;
 }
 .hypertext {
   color: rgb(107, 107, 255);
+  transition-duration: 0.5s;
 }
 .hypertext:hover {
   color: rgb(255, 255, 255);

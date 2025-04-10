@@ -3,23 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link rel="stylesheet" href="/static/css/common.css" />
+
     <title>[FILENAME]</title>
     <meta content="[FILENAME]" property="og:title" />
     <meta
       content="Size: [IMAGESIZE] Views: [VIEWS] 👀"
       property="og:description"
+      id="meta-desc"
     />
     <meta content="[IMAGEURL]" property="og:url" />
     <meta content="[IMAGEURL]" property="og:image" />
     <meta content="#ff1f39" data-react-helmet="true" name="theme-color" />
   </head>
+
   <script type="text/javascript" src="/static/js/common.js"></script>
+  <script type="text/javascript" src="/static/js/utils.js"></script>
   <script type="text/javascript" src="/static/js/view.js"></script>
-  <body>
+
+  <body style="background-image: url([IMAGEURL])">
     <center>
-      <div class="panel">
-        <img style="max-width: 400px" src="[IMAGEURL]" />
+      <div class="panel" id="panel">
+        <img style="max-width: 500px" src="[IMAGEURL]" />
         <br />
         <a class="hypertext" href="[IMAGEURL]">[FILENAME]</a>
         <br />

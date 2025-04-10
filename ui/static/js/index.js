@@ -39,6 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (file) {
       preview.src = URL.createObjectURL(file);
 
+      document.body.style.backgroundImage =
+        "url(" + URL.createObjectURL(file) + ")";
+
       let size = format_size(file.size);
       text_info.innerText = shorten_string(file.name) + " (" + size + ")";
       default_text = text_info.innerText;

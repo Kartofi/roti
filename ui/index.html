@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/css/index.css" />
 
     <script type="text/javascript" src="/static/js/common.js"></script>
+    <script type="text/javascript" src="/static/js/utils.js"></script>
     <script type="text/javascript" src="/static/js/index.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,7 +20,7 @@
   </head>
   <body>
     <center>
-      <div class="panel">
+      <div class="panel" id="panel">
         <h1>Roti🍅</h1>
 
         <a
@@ -37,13 +38,7 @@
           <label for="input_file" id="input_file_name" class="input_file">
             Click to select or drag your file
           </label>
-          <div class="drag-background" id="drag_background">
-            <h1 id="drag_text">
-              Drop your file <red>here</red>!
-              <br />
-              <img id="drag_image" src="/static/images/amagi.png" />
-            </h1>
-          </div>
+
           <input type="file" accept="image/*" id="input_file" name="image" />
           <br />
           <br />
@@ -66,6 +61,14 @@
             👀 Total views: <data class="format_num">[TOTAL_VIEWS]</data> 👀
           </a>
         </form>
+      </div>
+      <!-- Dragging background -->
+      <div class="drag-background" id="drag_background">
+        <h1 id="drag_text">
+          Drop your file <red>here</red>!
+          <br />
+          <img id="drag_image" src="/static/images/amagi.png" />
+        </h1>
       </div>
     </center>
   </body>
