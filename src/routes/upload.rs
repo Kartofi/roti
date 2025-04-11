@@ -1,7 +1,7 @@
 use std::{ env, fs::{ self, File }, io::{ Read, Write } };
 
 use choki::src::{ request::Request, response::Response, structs::{ ContentType, ResponseCode } };
-use crate::{ structs::Image, utils::{ self, get_timestamp }, Database };
+use crate::{ structs::Image, utils::{ self, get_timestamp }, Database, DATA_PATH };
 
 pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     let database = database.unwrap();
@@ -17,7 +17,7 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
         res.send_string("Only one file allowed!");
         return;
     }
-    
+
     let body_item = &body[0];
 
     let mut image = Image::new();
@@ -42,7 +42,7 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
         res.send_string("Only images allowed!");
         return;
     }
-    let file_path = env::var("DATA").unwrap() + &id + allowed_extension.1;
+    let file_path = DATA_PATH.to_string() + &id + allowed_extension.1;
 
     image.file_path = file_path.clone();
     image.file_type = allowed_extension.2.as_str().to_string();
@@ -59,6 +59,7 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     let mut file = File::open("./ui/uploaded.html").unwrap();
     let mut content: Vec<u8> = Vec::new();
     file.read_to_end(&mut content).unwrap();
+
     let mut string_content = String::from_utf8_lossy(&content).to_string();
     string_content = string_content.replace("[IMAGEURL]", &("/".to_string() + &id));
 

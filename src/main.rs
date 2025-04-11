@@ -1,19 +1,29 @@
-use std::{ fs, path::Path };
+use std::{ env, fs, path::Path };
 
 use database::Database;
 use dotenv::dotenv;
 
 use choki::{ src::{ request::Request, response::Response, structs::Url }, Server };
+use lazy_static::lazy_static;
 
 pub mod database;
 pub mod routes;
 pub mod utils;
 pub mod structs;
 
-fn main() {
+lazy_static! {
+    static ref DATA_PATH: String = get_var("DATA");
+    static ref MONGODB_URI: String = get_var("MONGODB_URI");
+    static ref ADMIN_PASSWORD: String = get_var("ADMIN_PASSWORD");
+}
+fn get_var(name: &str) -> String {
     dotenv().ok();
-    if !Path::new("./data").exists() {
-        fs::create_dir("./data").unwrap();
+    return env::var(name).expect(&format!("Var {} haven`t been set.", name));
+}
+
+fn main() {
+    if !Path::new(DATA_PATH.as_str()).exists() {
+        fs::create_dir(DATA_PATH.as_str()).unwrap();
     }
     let mut database: Database = Database::new();
 
