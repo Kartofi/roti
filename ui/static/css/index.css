@@ -38,10 +38,11 @@ input[type="submit"]:hover {
 }
 #preview {
   max-width: 100%;
-  max-height: 500px;
+  max-height: 400px;
 
   pointer-events: none;
 }
+
 .drag-background {
   background-color: rgba(0, 0, 0, 0.24);
   backdrop-filter: blur(20px);
@@ -67,8 +68,6 @@ input[type="submit"]:hover {
   transition-duration: 0.3s;
 }
 #drag_image {
-  box-shadow: var(--x) var(--y) 100px 150px rgba(255, 0, 0, 0.63);
-
   height: 0px;
   opacity: 0;
   pointer-events: none;

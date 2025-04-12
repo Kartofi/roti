@@ -14,6 +14,8 @@ window.addEventListener(
 );
 
 document.addEventListener("DOMContentLoaded", () => {
+  let background = document.getElementById("background");
+
   let imgInp = document.getElementById("input_file");
 
   let text_info = document.getElementById("input_file_name");
@@ -39,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (file) {
       preview.src = URL.createObjectURL(file);
 
-      document.body.style.backgroundImage =
+      background.style.backgroundImage =
         "url(" + URL.createObjectURL(file) + ")";
 
       let size = format_size(file.size);
