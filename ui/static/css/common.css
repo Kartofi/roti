@@ -16,7 +16,7 @@
   position: fixed;
   z-index: 0;
 
-  background-image: url("/static/images/tests.jpg");
+  background-image: url("/static/images/bg.gif");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
