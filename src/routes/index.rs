@@ -1,9 +1,13 @@
 use std::{ fs::File, io::Read };
 
-use choki::src::{ request::Request, response::Response, structs::ContentType };
+use choki::src::{ request::Request, response::Response, structs::{ ContentType, HttpServerError } };
 use crate::{ database, Database };
 
-pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
+pub fn handle(
+    req: Request,
+    mut res: Response,
+    database: Option<Database>
+) -> Result<(), HttpServerError> {
     let database = database.unwrap();
 
     let total_bans = database.total_bans();
@@ -21,5 +25,5 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     string_content = string_content.replace("[TOTAL_VIEWS]", &total_views.to_string());
 
     res.use_compression = true;
-    res.send_bytes_chunked(&string_content.as_bytes(), Some(ContentType::Html));
+    res.send_bytes_chunked(&string_content.as_bytes(), Some(ContentType::Html))
 }

@@ -31,6 +31,7 @@ body {
   margin: 0px;
   background-color: rgb(0, 0, 0);
   color: white;
+  z-index: 1;
 }
 
 a {
@@ -41,7 +42,7 @@ a {
 .panel {
   position: relative;
   top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 
   background-color: rgba(49, 49, 49, 0.274);
   backdrop-filter: blur(30px);
@@ -60,10 +61,21 @@ a {
 
   text-align: center;
   transition-duration: 0.3s;
+
+  z-index: 1;
 }
 footer {
-  position: absolute;
-  bottom: 0;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+footer > * > img {
+  width: 200px;
+  filter: drop-shadow(0 0px 10px rgba(255, 2, 2, 0.699));
 }
 .hypertext {
   color: rgb(107, 107, 255);

@@ -1,21 +1,27 @@
 use std::{ env, fs::{ self, File }, io::{ Read, Write } };
 
-use choki::src::{ request::Request, response::Response, structs::{ ContentType, ResponseCode } };
+use choki::src::{
+    request::Request,
+    response::Response,
+    structs::{ ContentType, HttpServerError, ResponseCode },
+};
 use crate::{ structs::Image, utils::{ self, get_timestamp }, Database, DATA_PATH };
 
-pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
+pub fn handle(
+    req: Request,
+    mut res: Response,
+    database: Option<Database>
+) -> Result<(), HttpServerError> {
     let database = database.unwrap();
 
     let body = req.body();
     if req.content_type.clone().unwrap() != ContentType::MultipartForm {
         res.set_status(&ResponseCode::BadRequest);
-        res.send_string("Only MultipartForm allowed!");
-        return;
+        return res.send_string("Only MultipartForm allowed!");
     }
     if body.len() != 1 {
         res.set_status(&ResponseCode::BadRequest);
-        res.send_string("Only one file allowed!");
-        return;
+        return res.send_string("Only one file allowed!");
     }
 
     let body_item = &body[0];
@@ -32,15 +38,13 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
 
     if image.file_name.is_empty() {
         res.set_status(&ResponseCode::BadRequest);
-        res.send_string("No file!");
-        return;
+        return res.send_string("No file!");
     }
     let allowed_extension = utils::is_extension_allowed(&image.file_name);
 
     if allowed_extension.0 == false {
         res.set_status(&ResponseCode::BadRequest);
-        res.send_string("Only images allowed!");
-        return;
+        return res.send_string("Only images allowed!");
     }
     let file_path = DATA_PATH.to_string() + &id + allowed_extension.1;
 
@@ -52,8 +56,7 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
         file.write_all(body_item.data).unwrap();
     } else {
         res.set_status(&ResponseCode::BadRequest);
-        res.send_string("Server ERROR!");
-        return;
+        return res.send_string("Server ERROR!");
     }
 
     let mut file = File::open("./ui/uploaded.html").unwrap();
@@ -64,5 +67,5 @@ pub fn handle(req: Request, mut res: Response, database: Option<Database>) {
     string_content = string_content.replace("[IMAGEURL]", &("/".to_string() + &id));
 
     res.use_compression = true;
-    res.send_bytes_chunked(&string_content.as_bytes(), Some(ContentType::Html));
+    res.send_bytes_chunked(&string_content.as_bytes(), Some(ContentType::Html))
 }
