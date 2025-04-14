@@ -53,6 +53,8 @@ input[type="submit"]:hover {
   top: 0px;
   left: 0px;
 
+  z-index: 2;
+
   transition-duration: 0.3s;
 }
 
