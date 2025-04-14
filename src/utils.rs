@@ -29,7 +29,7 @@ pub fn random_char() -> char {
 }
 pub fn get_id(length: u64) -> String {
     let mut output = String::new();
-    for i in 0..length {
+    for _ in 0..length {
         output.push(random_char());
     }
 

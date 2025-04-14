@@ -87,7 +87,6 @@ async function unban(ip) {
 async function ban_ip(password, ip, reason) {
   let formData = new FormData();
 
-  formData.append("password", password);
   formData.append("ip", ip);
   formData.append("reason", reason);
 
@@ -101,7 +100,6 @@ async function ban_ip(password, ip, reason) {
 async function unban_ip(password, ip) {
   let formData = new FormData();
 
-  formData.append("password", password);
   formData.append("ip", ip);
 
   let res = await fetch("/admin/unban", {
@@ -112,13 +110,8 @@ async function unban_ip(password, ip) {
   return res.json();
 }
 async function get_bans(password) {
-  let formData = new FormData();
-
-  formData.append("password", password);
-
   let res = await fetch("/admin/getbans", {
     method: "POST",
-    body: formData,
   });
 
   return res.json();

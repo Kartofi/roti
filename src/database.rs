@@ -4,13 +4,20 @@ use bson::doc;
 use mongodb::{ bson::oid::ObjectId, results::DeleteResult };
 use mongodb::sync::{ Client, Collection };
 
-use crate::{ routes::image, structs::{ Ban, Image, User }, utils::{ self, get_id, get_timestamp } };
+use crate::{
+    routes::image,
+    structs::{ Ban, Image, Session, User },
+    utils::{ self, get_id, get_timestamp },
+    SESSION_EXPIRE_TIME,
+    SESSION_ID_LENGTH,
+};
 
 #[derive(Clone)]
 pub struct Database {
     client: Client,
     images: Collection<Image>,
     banned_users: Collection<Ban>,
+    admin_sessions: Collection<Session>,
 }
 
 impl Database {
@@ -23,9 +30,57 @@ impl Database {
 
         let images = client.database("Roti").collection::<Image>("Images");
         let banned_users = client.database("Roti").collection::<Ban>("Banned_Users");
+        let admin_sessions = client.database("Roti").collection::<Session>("Admin_Sessions");
 
-        return Database { client: client, images: images, banned_users: banned_users };
+        return Database {
+            client: client,
+            images: images,
+            banned_users: banned_users,
+            admin_sessions: admin_sessions,
+        };
     }
+    //Admin
+    pub fn get_session(&self, id: &str) -> Option<Session> {
+        let task = self.admin_sessions.find_one(doc! { "id":id });
+        match task.run() {
+            Ok(res) => {
+                return res;
+            }
+            Err(_) => {
+                return None;
+            }
+        }
+    }
+    pub fn remove_session(&self, id: &str) -> bool {
+        let session = self.get_session(id);
+        if session.is_none() {
+            return false;
+        }
+
+        let task = self.admin_sessions.delete_one(doc! { "id": id });
+        match task.run() {
+            Ok(_) => {
+                return true;
+            }
+            Err(_) => {
+                return false;
+            }
+        }
+    }
+    pub fn login(&self, ip: &str) -> Option<Session> {
+        let mut session = Session::new();
+        session.id = get_id(SESSION_ID_LENGTH);
+        session.ip = ip.to_string();
+        session.expire_time = get_timestamp() + SESSION_EXPIRE_TIME;
+
+        let task = self.admin_sessions.insert_one(&session);
+        let res = task.run();
+        if res.is_err() {
+            return None;
+        }
+        Some(session)
+    }
+
     //Statistics
     pub fn total_bans(&self) -> usize {
         let task = self.banned_users.find(doc! {});

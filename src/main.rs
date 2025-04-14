@@ -11,6 +11,9 @@ pub mod routes;
 pub mod utils;
 pub mod structs;
 
+pub static SESSION_ID_LENGTH: u64 = 50;
+pub static SESSION_EXPIRE_TIME: u64 = 50;
+
 lazy_static! {
     static ref DATA_PATH: String = get_var("DATA");
     static ref MONGODB_URI: String = get_var("MONGODB_URI");
@@ -26,7 +29,7 @@ fn main() {
         fs::create_dir(DATA_PATH.as_str()).unwrap();
     }
     let mut database: Database = Database::new();
-
+    database.login("ip").unwrap();
     let mut server: Server<Database> = Server::new(Some(5_000_000), Some(database));
 
     server.use_middleware(routes::middleware::handle);

@@ -53,3 +53,15 @@ impl Image {
         };
     }
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Session {
+    pub id: String,
+    pub ip: String,
+    pub expire_time: u64,
+}
+impl Session {
+    pub fn new() -> Session {
+        Session { id: String::new(), ip: String::new(), expire_time: 0 }
+    }
+}
