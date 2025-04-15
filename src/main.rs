@@ -12,7 +12,7 @@ pub mod utils;
 pub mod structs;
 
 pub static SESSION_ID_LENGTH: u64 = 50;
-pub static SESSION_EXPIRE_TIME: u64 = 50;
+pub static SESSION_EXPIRE_TIME: i64 = 50;
 
 lazy_static! {
     static ref DATA_PATH: String = get_var("DATA");
@@ -29,12 +29,14 @@ fn main() {
         fs::create_dir(DATA_PATH.as_str()).unwrap();
     }
     let mut database: Database = Database::new();
-    database.login("ip").unwrap();
+
     let mut server: Server<Database> = Server::new(Some(5_000_000), Some(database));
 
     server.use_middleware(routes::middleware::handle);
 
     server.get("/admin", routes::admin::handle).unwrap();
+    server.post("/login", routes::admin::handle_login).unwrap();
+
     server.post("/admin/getbans", routes::admin::handle_get_bans).unwrap();
     server.delete("/admin/unban", routes::admin::handle_unban).unwrap();
     server.post("/admin/ban", routes::admin::handle_ban).unwrap();

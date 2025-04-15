@@ -5,7 +5,7 @@ use choki::src::{
     response::Response,
     structs::{ ContentType, HttpServerError, ResponseCode },
 };
-use crate::{ structs::Image, utils::{ self, get_timestamp }, Database, DATA_PATH };
+use crate::{ structs::Image, utils::{ self, get_timestamp, redirect }, Database, DATA_PATH };
 
 pub fn handle(
     req: Request,
@@ -59,13 +59,5 @@ pub fn handle(
         return res.send_string("Server ERROR!");
     }
 
-    let mut file = File::open("./ui/uploaded.html").unwrap();
-    let mut content: Vec<u8> = Vec::new();
-    file.read_to_end(&mut content).unwrap();
-
-    let mut string_content = String::from_utf8_lossy(&content).to_string();
-    string_content = string_content.replace("[IMAGEURL]", &("/".to_string() + &id));
-
-    res.use_compression = true;
-    res.send_bytes_chunked(&string_content.as_bytes(), Some(ContentType::Html))
+    redirect(&mut res, &("/".to_string() + &id))
 }

@@ -6,13 +6,15 @@ use choki::src::{
     response::Response,
     structs::{ BodyItem, ContentType, Cookie, HttpServerError, ResponseCode },
 };
+use chrono::{ TimeZone, Utc };
 use crate::{
     database,
-    structs::Ban,
-    utils::get_timestamp,
+    structs::{ Ban, Session },
+    utils::{ get_id, get_timestamp, redirect },
     Database,
     ADMIN_PASSWORD,
     SESSION_EXPIRE_TIME,
+    SESSION_ID_LENGTH,
 };
 
 pub fn handle(
@@ -22,9 +24,17 @@ pub fn handle(
 ) -> Result<(), HttpServerError> {
     res.use_compression = true;
 
+    let database = database.unwrap();
+
+    let ip = req.ip.clone().unwrap_or_default();
+
+    if !handle_session_check(&ip, &req.cookies, &database) {
+        return crate::utils::send_file("./ui/login.html", ContentType::Html, &mut res);
+    }
+
     crate::utils::send_file("./ui/admin.html", ContentType::Html, &mut res)
 }
-
+// POST /admin/login
 pub fn handle_login(
     req: Request,
     mut res: Response,
@@ -32,7 +42,47 @@ pub fn handle_login(
 ) -> Result<(), HttpServerError> {
     res.use_compression = true;
 
-    crate::utils::send_file("./ui/admin.html", ContentType::Html, &mut res)
+    let body = req.body();
+
+    if !is_multipartform(&req.content_type) || body.len() != 1 {
+        res.set_status(&ResponseCode::BadRequest);
+        return res.send_json(
+            &(doc! { "result":false,"error":"Body must be multipart/form" }).to_string()
+        );
+    }
+
+    let database = database.unwrap();
+
+    let ip = req.ip.clone().unwrap_or_default();
+
+    if handle_session_check(&ip, &req.cookies, &database) {
+        return crate::utils::send_file("./ui/login.html", ContentType::Html, &mut res);
+    }
+
+    let password = &body[0];
+
+    if check_password(&String::from_utf8_lossy(password.data)) {
+        let mut session = Session::new();
+        session.id = get_id(SESSION_ID_LENGTH);
+        session.expire_time = get_timestamp() + SESSION_EXPIRE_TIME;
+        session.ip = ip;
+
+        let res_sess = database.add_session(session);
+
+        if res_sess.is_some() {
+            let sss = res_sess.unwrap();
+
+            let mut cookie = Cookie::new_simple("Session".to_string(), sss.id);
+
+            cookie.expires = Utc.timestamp_opt(sss.expire_time as i64, 0)
+                .unwrap()
+                .format("%a, %d %b %Y %H:%M:%S GMT")
+                .to_string();
+
+            res.set_cookie(&cookie); // HERE FOR SOME REASON OMG
+        }
+    }
+    redirect(&mut res, "/admin")
 }
 
 // Controls
@@ -41,6 +91,14 @@ pub fn handle_ban(
     mut res: Response,
     database: Option<Database>
 ) -> Result<(), HttpServerError> {
+    res.use_compression = true;
+    if !is_multipartform(&req.content_type) {
+        res.set_status(&ResponseCode::BadRequest);
+        return res.send_json(
+            &(doc! { "result":false,"error":"Body must be multipart/form" }).to_string()
+        );
+    }
+
     let database = database.unwrap();
 
     let body = req.body();
@@ -65,7 +123,6 @@ pub fn handle_ban(
         &String::from_utf8_lossy(body[1].data)
     );
 
-    res.use_compression = true;
     res.send_json(&(doc! { "result":result.0,"error":result.1 }).to_string())
 }
 pub fn handle_unban(
@@ -73,6 +130,14 @@ pub fn handle_unban(
     mut res: Response,
     database: Option<Database>
 ) -> Result<(), HttpServerError> {
+    res.use_compression = true;
+    if !is_multipartform(&req.content_type) {
+        res.set_status(&ResponseCode::BadRequest);
+        return res.send_json(
+            &(doc! { "result":false,"error":"Body must be multipart/form" }).to_string()
+        );
+    }
+
     let database = database.unwrap();
 
     let body = req.body();
@@ -91,7 +156,6 @@ pub fn handle_unban(
 
     let result = database.unban_ip(&String::from_utf8_lossy(body[0].data));
 
-    res.use_compression = true;
     res.send_json(&(doc! { "result":result,"error":"" }).to_string())
 }
 pub fn handle_get_bans(
@@ -99,6 +163,15 @@ pub fn handle_get_bans(
     mut res: Response,
     database: Option<Database>
 ) -> Result<(), HttpServerError> {
+    res.use_compression = true;
+
+    if !is_multipartform(&req.content_type) {
+        res.set_status(&ResponseCode::BadRequest);
+        return res.send_json(
+            &(doc! { "result":false,"error":"Body must be multipart/form" }).to_string()
+        );
+    }
+
     let database = database.unwrap();
 
     let ip = req.ip.clone().unwrap_or_default();
@@ -114,7 +187,6 @@ pub fn handle_get_bans(
 
     let bson = serde_json::to_string(&bans).unwrap_or_default();
 
-    res.use_compression = true;
     res.send_json(&bson)
 }
 fn handle_session_check(ip: &str, cookies: &Vec<Cookie>, database: &Database) -> bool {
@@ -122,12 +194,14 @@ fn handle_session_check(ip: &str, cookies: &Vec<Cookie>, database: &Database) ->
     if session_cookie.is_none() {
         return false;
     }
+
     let session_cookie = session_cookie.unwrap();
 
     let session = database.get_session(&session_cookie.value);
     if session.is_none() {
         return false;
     }
+
     let session = session.unwrap();
     if session.ip != ip {
         return false;
@@ -140,6 +214,21 @@ fn handle_session_check(ip: &str, cookies: &Vec<Cookie>, database: &Database) ->
 
     return true;
 }
+
 fn check_password(password: &str) -> bool {
     return password == ADMIN_PASSWORD.as_str();
+}
+
+fn is_multipartform(input: &Option<ContentType>) -> bool {
+    match input {
+        Some(content_type) => {
+            if content_type == &ContentType::MultipartForm {
+                return true;
+            }
+            return false;
+        }
+        None => {
+            return false;
+        }
+    }
 }

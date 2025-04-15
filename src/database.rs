@@ -67,18 +67,15 @@ impl Database {
             }
         }
     }
-    pub fn login(&self, ip: &str) -> Option<Session> {
-        let mut session = Session::new();
-        session.id = get_id(SESSION_ID_LENGTH);
-        session.ip = ip.to_string();
-        session.expire_time = get_timestamp() + SESSION_EXPIRE_TIME;
-
-        let task = self.admin_sessions.insert_one(&session);
-        let res = task.run();
-        if res.is_err() {
-            return None;
+    pub fn add_session(&self, session: Session) -> Option<Session> {
+        match self.admin_sessions.insert_one(&session).run() {
+            Ok(_) => {
+                return Some(session);
+            }
+            Err(_) => {
+                return None;
+            }
         }
-        Some(session)
     }
 
     //Statistics

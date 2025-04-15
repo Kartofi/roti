@@ -7,7 +7,7 @@ use crate::utils::{ get_id_default };
 pub struct Ban {
     pub ip: String,
     pub reason: String,
-    pub time: u64,
+    pub time: i64,
 }
 impl Ban {
     pub fn new() -> Ban {
@@ -37,7 +37,7 @@ pub struct Image {
     pub views: u64,
     pub uploader: User,
 
-    pub upload_time: u64,
+    pub upload_time: i64,
 }
 impl Image {
     pub fn new() -> Image {
@@ -57,11 +57,12 @@ impl Image {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Session {
     pub id: String,
+
     pub ip: String,
-    pub expire_time: u64,
+    pub expire_time: i64,
 }
 impl Session {
     pub fn new() -> Session {
-        Session { id: String::new(), ip: String::new(), expire_time: 0 }
+        Session { id: "".to_string(), ip: "".to_string(), expire_time: 0 }
     }
 }

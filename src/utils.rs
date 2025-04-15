@@ -12,8 +12,8 @@ const ALLOWED_EXTENSIONS: [(&str, ContentType); 5] = [
 ];
 const ID_LENGTH: u64 = 20;
 
-pub fn get_timestamp() -> u64 {
-    SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs()
+pub fn get_timestamp() -> i64 {
+    SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64
 }
 pub fn random_num(min: i64, max: i64) -> i64 {
     let mut rng = rand::rng();
@@ -61,4 +61,16 @@ pub fn send_file(
     file.read_to_end(&mut content).unwrap();
 
     res.send_bytes_chunked(&content, Some(content_type))
+}
+
+pub fn redirect(res: &mut Response, url: &str) -> Result<(), HttpServerError> {
+    let mut file = File::open("./ui/redirect.html").unwrap();
+    let mut content: Vec<u8> = Vec::new();
+    file.read_to_end(&mut content).unwrap();
+
+    let mut string_content = String::from_utf8_lossy(&content).to_string();
+    string_content = string_content.replace("[URL]", url);
+
+    res.use_compression = true;
+    res.send_bytes_chunked(string_content.as_bytes(), Some(ContentType::Html))
 }
