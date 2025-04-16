@@ -12,7 +12,7 @@ pub mod utils;
 pub mod structs;
 
 pub static SESSION_ID_LENGTH: u64 = 50;
-pub static SESSION_EXPIRE_TIME: i64 = 50;
+pub static SESSION_EXPIRE_TIME: i64 = 3600 * 24 * 7; // days
 
 lazy_static! {
     static ref DATA_PATH: String = get_var("DATA");

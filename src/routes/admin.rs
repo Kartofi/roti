@@ -4,7 +4,7 @@ use bson::doc;
 use choki::src::{
     request::Request,
     response::Response,
-    structs::{ BodyItem, ContentType, Cookie, HttpServerError, ResponseCode },
+    structs::{ BodyItem, ContentType, Cookie, Header, HttpServerError, ResponseCode },
 };
 use chrono::{ TimeZone, Utc };
 use crate::{
@@ -67,21 +67,20 @@ pub fn handle_login(
         session.expire_time = get_timestamp() + SESSION_EXPIRE_TIME;
         session.ip = ip;
 
-        let res_sess = database.add_session(session);
+        let result = database.add_session(&session);
 
-        if res_sess.is_some() {
-            let sss = res_sess.unwrap();
+        if result {
+            let mut cookie = Cookie::new_simple("roti_session".to_string(), session.id);
 
-            let mut cookie = Cookie::new_simple("Session".to_string(), sss.id);
-
-            cookie.expires = Utc.timestamp_opt(sss.expire_time as i64, 0)
+            cookie.expires = Utc.timestamp_opt(session.expire_time as i64, 0)
                 .unwrap()
                 .format("%a, %d %b %Y %H:%M:%S GMT")
                 .to_string();
 
-            res.set_cookie(&cookie); // HERE FOR SOME REASON OMG
+            res.set_cookie(&cookie);
         }
     }
+
     redirect(&mut res, "/admin")
 }
 
@@ -165,13 +164,6 @@ pub fn handle_get_bans(
 ) -> Result<(), HttpServerError> {
     res.use_compression = true;
 
-    if !is_multipartform(&req.content_type) {
-        res.set_status(&ResponseCode::BadRequest);
-        return res.send_json(
-            &(doc! { "result":false,"error":"Body must be multipart/form" }).to_string()
-        );
-    }
-
     let database = database.unwrap();
 
     let ip = req.ip.clone().unwrap_or_default();
@@ -190,7 +182,7 @@ pub fn handle_get_bans(
     res.send_json(&bson)
 }
 fn handle_session_check(ip: &str, cookies: &Vec<Cookie>, database: &Database) -> bool {
-    let session_cookie = cookies.iter().find(|item| item.name == "Session");
+    let session_cookie = cookies.iter().find(|item| item.name == "roti_session");
     if session_cookie.is_none() {
         return false;
     }
@@ -207,7 +199,7 @@ fn handle_session_check(ip: &str, cookies: &Vec<Cookie>, database: &Database) ->
         return false;
     }
 
-    if get_timestamp() - session.expire_time <= SESSION_EXPIRE_TIME {
+    if get_timestamp() - session.expire_time >= SESSION_EXPIRE_TIME {
         database.remove_session(&session.id);
         return false;
     }

@@ -1,11 +1,9 @@
 let bans = [];
 
-let password_input;
 let bans_count;
 let bans_el;
 
 document.addEventListener("DOMContentLoaded", () => {
-  password_input = document.getElementById("admin_pass");
   let ip_search_input = document.getElementById("ip_search_input");
 
   let fetch_bans_el = document.getElementById("fetch_bans");
@@ -26,11 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let ban_result = document.getElementById("ban_result");
 
   ban_button.addEventListener("click", async () => {
-    let result = await ban_ip(
-      password_input.value,
-      ban_ip_input.value,
-      ban_reason_input.value
-    );
+    let result = await ban_ip(ban_ip_input.value, ban_reason_input.value);
     if (result.result == false) {
       ban_result.innerHTML = "<red>" + result.error + "</red>";
     } else {
@@ -67,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 async function update_bans() {
-  bans = await get_bans(password_input.value);
+  bans = await get_bans();
   if (bans.error != undefined) {
     bans_el.innerHTML = bans;
     return;
@@ -76,7 +70,7 @@ async function update_bans() {
   bans_count.innerText = "Loaded " + bans.length + " bans";
 }
 async function unban(ip) {
-  let res = await unban_ip(password_input.value, ip);
+  let res = await unban_ip(ip);
   if (res.result == false) {
     return;
   }
@@ -84,7 +78,7 @@ async function unban(ip) {
   display_bans(bans);
 }
 // Http
-async function ban_ip(password, ip, reason) {
+async function ban_ip(ip, reason) {
   let formData = new FormData();
 
   formData.append("ip", ip);
@@ -97,7 +91,7 @@ async function ban_ip(password, ip, reason) {
 
   return res.json();
 }
-async function unban_ip(password, ip) {
+async function unban_ip(ip) {
   let formData = new FormData();
 
   formData.append("ip", ip);
@@ -109,7 +103,7 @@ async function unban_ip(password, ip) {
 
   return res.json();
 }
-async function get_bans(password) {
+async function get_bans() {
   let res = await fetch("/admin/getbans", {
     method: "POST",
   });

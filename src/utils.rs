@@ -1,5 +1,6 @@
 use std::{ fs::File, io::Read, time::{ SystemTime, UNIX_EPOCH } };
 use choki::src::{ response::Response, structs::{ ContentType, HttpServerError } };
+use chrono::Utc;
 use rand::Rng;
 
 const CHARSET: &str = "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -13,7 +14,7 @@ const ALLOWED_EXTENSIONS: [(&str, ContentType); 5] = [
 const ID_LENGTH: u64 = 20;
 
 pub fn get_timestamp() -> i64 {
-    SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i64
+    Utc::now().timestamp()
 }
 pub fn random_num(min: i64, max: i64) -> i64 {
     let mut rng = rand::rng();

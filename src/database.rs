@@ -67,13 +67,13 @@ impl Database {
             }
         }
     }
-    pub fn add_session(&self, session: Session) -> Option<Session> {
-        match self.admin_sessions.insert_one(&session).run() {
+    pub fn add_session(&self, session: &Session) -> bool {
+        match self.admin_sessions.insert_one(session).run() {
             Ok(_) => {
-                return Some(session);
+                return true;
             }
             Err(_) => {
-                return None;
+                return false;
             }
         }
     }
