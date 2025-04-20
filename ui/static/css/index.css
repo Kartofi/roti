@@ -2,10 +2,15 @@ input[type="file"] {
   display: none;
 }
 input[type="submit"] {
-  background-color: rgb(25, 25, 25);
+  background-color: rgba(0, 0, 0, 0.13);
 
-  border: none;
+  border-color: transparent;
+  border-width: 1px;
+  border-style: solid;
+
   border-radius: 10px;
+
+  backdrop-filter: blur(300px);
 
   font-size: 25px;
   color: white;
@@ -14,8 +19,15 @@ input[type="submit"] {
 }
 input[type="submit"]:hover {
   cursor: pointer;
-  background-color: white;
-  color: black;
+  background-color: rgba(0, 0, 0, 0.13);
+
+  border-color: rgb(252, 58, 58);
+  border-width: 1px;
+  border-style: solid;
+
+  color: rgb(252, 58, 58);
+
+  filter: drop-shadow(0px 0px 50px #ff0000);
 }
 .input_file {
   font-size: 25px;
@@ -31,16 +43,20 @@ input[type="submit"]:hover {
   transition-duration: 0.5s;
 }
 .input_file:hover {
+  padding: 7px;
+
   color: rgb(34, 34, 34);
   border-color: rgb(255, 255, 255);
-  padding: 7px;
   background-color: rgb(255, 255, 255);
+
+  filter: drop-shadow(0px 0px 50px #ffffff);
 }
 #preview {
   max-width: 100%;
   max-height: 400px;
 
   pointer-events: none;
+  user-select: none;
 }
 
 .drag-background {

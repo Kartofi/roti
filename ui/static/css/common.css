@@ -14,7 +14,7 @@
   width: 100vw;
   height: 100vh;
   position: fixed;
-  
+
   z-index: 0;
 
   background-image: url("/static/images/bg.gif");
@@ -65,6 +65,7 @@ a {
 
   z-index: 1;
 }
+
 footer {
   position: fixed;
   bottom: 10px;
@@ -74,21 +75,45 @@ footer {
 
   z-index: 0;
 }
+
 footer > * > img {
   width: 200px;
   filter: drop-shadow(0 0px 10px rgba(255, 2, 2, 0.699));
 }
+
+.a-button {
+  background-color: rgba(255, 255, 255, 0);
+
+  padding: 5px;
+  margin: 7px;
+
+  border-radius: 10px;
+  text-decoration: none;
+
+  backdrop-filter: blur(300px);
+}
+
 .hypertext {
   color: rgb(107, 107, 255);
   transition-duration: 0.5s;
 }
 .hypertext:hover {
-  color: rgb(255, 255, 255);
-}
-red {
-  color: rgb(255, 53, 53);
+  color: white;
+
+  filter: drop-shadow(0px 0px 50px white);
 }
 
+red {
+  color: rgb(255, 53, 53);
+  transition-duration: 0.3s;
+}
 yellow {
   color: yellow;
+  transition-duration: 0.3s;
+}
+red:hover {
+  filter: drop-shadow(0px 0px 50px #ff0000);
+}
+yellow:hover {
+  filter: drop-shadow(0px 0px 50px yellow);
 }

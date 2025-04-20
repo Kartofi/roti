@@ -16,7 +16,7 @@ use crate::{
     SESSION_EXPIRE_TIME,
     SESSION_ID_LENGTH,
 };
-
+// GET /admin
 pub fn handle(
     req: Request,
     mut res: Response,
@@ -85,6 +85,7 @@ pub fn handle_login(
 }
 
 // Controls
+// POST /admin/ban
 pub fn handle_ban(
     req: Request,
     mut res: Response,
@@ -124,6 +125,7 @@ pub fn handle_ban(
 
     res.send_json(&(doc! { "result":result.0,"error":result.1 }).to_string())
 }
+// POST /admin/unban
 pub fn handle_unban(
     req: Request,
     mut res: Response,
@@ -157,6 +159,7 @@ pub fn handle_unban(
 
     res.send_json(&(doc! { "result":result,"error":"" }).to_string())
 }
+// POST /admin/getbans
 pub fn handle_get_bans(
     req: Request,
     mut res: Response,
@@ -181,6 +184,8 @@ pub fn handle_get_bans(
 
     res.send_json(&bson)
 }
+
+// Utils
 fn handle_session_check(ip: &str, cookies: &Vec<Cookie>, database: &Database) -> bool {
     let session_cookie = cookies.iter().find(|item| item.name == "roti_session");
     if session_cookie.is_none() {
