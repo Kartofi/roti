@@ -118,6 +118,10 @@ impl Database {
             .collect();
         return sizes.iter().sum();
     }
+    pub fn total_images(&self) -> u64 {
+        let task = self.images.find(doc! {});
+        return task.run().unwrap().count() as u64;
+    }
     //Images
     pub fn add_image(&self, image: Image) -> bool {
         match self.images.insert_one(image).run() {

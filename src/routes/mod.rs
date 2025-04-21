@@ -1,5 +1,6 @@
 pub mod index;
 pub mod upload;
+pub mod uploads;
 pub mod image;
 pub mod view;
 

@@ -1,6 +1,7 @@
 input[type="file"] {
   display: none;
 }
+
 input[type="submit"] {
   background-color: rgba(0, 0, 0, 0.13);
 
@@ -29,6 +30,9 @@ input[type="submit"]:hover {
 
   filter: drop-shadow(0px 0px 50px #ff0000);
 }
+input[type="submit"]:active {
+  border-radius: 20px;
+}
 .input_file {
   font-size: 25px;
 
@@ -51,6 +55,7 @@ input[type="submit"]:hover {
 
   filter: drop-shadow(0px 0px 50px #ffffff);
 }
+
 #preview {
   max-width: 100%;
   max-height: 400px;

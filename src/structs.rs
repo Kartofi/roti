@@ -1,3 +1,4 @@
+use bson::{ doc, Document };
 use choki::src::structs::ContentType;
 use serde::{ Deserialize, Serialize };
 
@@ -51,6 +52,21 @@ impl Image {
             uploader: User::new(),
             upload_time: 0,
         };
+    }
+    pub fn to_bson_simple(&self) -> Document {
+        let size_i64 = self.size as i64;
+        let views_i64 = self.views as i64;
+
+        let doc =
+            doc! {
+            "id": &self.id,
+            "file_name": &self.file_name,
+            "file_type": &self.file_type,
+            "size": size_i64,
+            "views":views_i64,
+            "upload_time": &self.upload_time
+        };
+        return doc;
     }
 }
 

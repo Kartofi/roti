@@ -12,6 +12,7 @@ pub fn handle(
 
     let total_bans = database.total_bans();
     let total_size = database.total_size();
+    let total_count = database.total_images();
     let total_views = database.total_views();
 
     let mut file = File::open("./ui/index.html").unwrap();
@@ -21,6 +22,7 @@ pub fn handle(
     let mut string_content = String::from_utf8_lossy(&content).to_string();
 
     string_content = string_content.replace("[TOTAL_BANS]", &total_bans.to_string());
+    string_content = string_content.replace("[TOTAL_IMAGES]", &total_count.to_string());
     string_content = string_content.replace("[TOTAL_SIZE]", &total_size.to_string());
     string_content = string_content.replace("[TOTAL_VIEWS]", &total_views.to_string());
 
