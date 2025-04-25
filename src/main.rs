@@ -46,9 +46,6 @@ fn main() {
     server.get("/[id]", routes::view::handle).unwrap();
     server.post("/upload", routes::upload::handle).unwrap();
 
-    server.get("/uploads", routes::uploads::handle).unwrap();
-    server.get("/uploads/fetch", routes::uploads::handle_fetch).unwrap();
-
     server.get("/randomimage", routes::random_image::handle).unwrap();
 
     server.new_static("/static", "./ui/static").unwrap();
